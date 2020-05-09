@@ -260,8 +260,8 @@ namespace KY.DapperExtensions
                 dynamicParameters.Add(parameter.Key, parameter.Value);
             }
           
-           // return (int)connection.Query(sql, dynamicParameters, transaction, false, commandTimeout, CommandType.Text).Single().Total;
-            return (int)connection.Query(sql, dynamicParameters, transaction, false, commandTimeout, CommandType.Text).FirstOrDefault();
+            return (int)connection.Query(sql, dynamicParameters, transaction, false, commandTimeout, CommandType.Text).Single().Total;
+            //return (int)connection.Query(sql, dynamicParameters, transaction, false, commandTimeout, CommandType.Text).FirstOrDefault();
         }
 
         public IMultipleResultReader GetMultiple(IDbConnection connection, GetMultiplePredicate predicate, IDbTransaction transaction, int? commandTimeout)
