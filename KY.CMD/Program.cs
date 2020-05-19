@@ -6,13 +6,23 @@ using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using KY.Converter;
 
+
 namespace KY.CMD
 {
     class Program
     {
-        static void Main(string[] args)
+       
+        static  void Main(string[] args)
         {
-            TestConvert();
+            Console.ReadKey();
+            AddTakeDemo.BC_AddTakeCompleteAdding();
+            TryTakeDemo.BC_TryTake();
+            FromToAnyDemo.BC_FromToAny();
+             ConsumingEnumerableDemo.BC_GetConsumingEnumerable();
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
+            //TestConvert();
+
         }
 
         public static void   TestConvert() {
@@ -27,7 +37,7 @@ namespace KY.CMD
 
             var dd = new { SSID = 1, SName = "周杰伦", SPPID = new[] { 1, 2, 3 }, children = new[] { new { ids = 4, names = "123" }, new { ids = 2, names = "321" }, new { ids = 6, names = "222" } } };
             var json = JsonConvert.SerializeObject(dd);
-            var cc = json.DeserializeJson();
+            var cc = AbstractConverter.abstractConverter.DeserializeJson(json);
             var ccc = cc.ConvertDictionary();
             Dictionary<string, object> Father = new Dictionary<string, object>();
             Father.Add("ID", "PPPP");
