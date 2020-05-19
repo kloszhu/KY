@@ -8,4 +8,8 @@
     <ProjectReference Include="..\KY.Infrastructure\KY.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dapper\" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,5 @@
+{
+  "DbConnection": "data source=,;user id=sa;password=sa123456;database=myauth",
+  "DbType": "System.Data.SqlClient",
+  "": ""
+}
