@@ -45,7 +45,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KY.AsynchronousManager", "K
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KY.CMD", "KY.CMD\KY.CMD.csproj", "{223E157B-B241-4BE4-A299-50C3CC6FD0E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KY.Converter", "KY.Converter\KY.Converter.csproj", "{68733BEE-BC29-4417-9ABA-FCCB6998E4C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KY.Converter", "KY.Converter\KY.Converter.csproj", "{68733BEE-BC29-4417-9ABA-FCCB6998E4C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "projectItem", "projectItem", "{34E76397-9242-40DC-BF89-67171F4CE105}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
