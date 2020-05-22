@@ -1,8 +1,7 @@
 ﻿@page "/fetchdata"
-
+@using MatBlazor;
 @using KY.Blazor.Data
 @inject WeatherForecastService ForecastService
-
 <h1>Weather forecast</h1>
 
 <p>This component demonstrates fetching data from a service.</p>
@@ -34,9 +33,30 @@ else
             }
         </tbody>
     </table>
+    <div>
+        <MatPaginator Length="@forecasts.Count()" PageSize="@pageSize" Page="@OnPage"></MatPaginator>
+    </div>
+
+    <div>
+        pageSize : @pageSize
+    </div>
+
+    <div>
+        pageIndex : @pageIndex
+    </div>
+
+
 }
 
 @code {
+    int pageSize = 3;
+    int pageIndex = 0;
+
+    void OnPage(MatPaginatorPageEvent e)
+    {
+        pageSize = e.PageSize;
+        pageIndex = e.PageIndex;
+    }
     private WeatherForecast[] forecasts;
 
     protected override async Task OnInitializedAsync()
