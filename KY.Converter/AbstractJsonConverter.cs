@@ -1,18 +1,62 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace KY.Converter
 {
-    public static class Converter
+    public abstract class AbstractJsonConverter
+    {
+
+        public readonly static AbstractJsonConverter Converter= new ConverterDictionary();
+      
+      
+        public abstract string SerializeJson<TKey, TValue>(Dictionary<TKey, TValue> dict);
+        public abstract object DeserializeJson(string json);
+        public abstract Dictionary<string, object> Convert(object obj);
+    }
+    public  class ConverterDictionary : AbstractJsonConverter
+    {
+        /// <summary>
+        /// 对象转化为字典
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public  override Dictionary<string, object> Convert(object obj)
+        {
+            return KY.Converter.Converter.ConvertDictionary(obj);
+        }
+        /// <summary>
+        /// Json序列化
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
+        public  override object DeserializeJson(string json)
+        {
+            return KY.Converter.Converter.DeserializeJson(json);
+        }
+        /// <summary>
+        /// 序列化字典到Json
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dict"></param>
+        /// <returns></returns>
+        public override string SerializeJson<TKey, TValue>(Dictionary<TKey, TValue> dict)
+        {
+            return KY.Converter.Converter.SerializeDictionaryToJsonString(dict);
+        }
+    }
+
+
+     static class Converter
     {
         #region Json和Dictionary相互转化
         /// <summary>
@@ -22,7 +66,7 @@ namespace KY.Converter
         /// <typeparam name="TValue">字典value</typeparam>
         /// <param name="dict">要序列化的字典数据</param>
         /// <returns>json字符串</returns>
-        public static string SerializeDictionaryToJsonString<TKey, TValue>(this Dictionary<TKey, TValue> dict)
+        public static string SerializeDictionaryToJsonString<TKey, TValue>( Dictionary<TKey, TValue> dict)
         {
             string jsonStr = JsonConvert.SerializeObject(dict);
             return jsonStr;
@@ -35,7 +79,7 @@ namespace KY.Converter
         /// <typeparam name="TValue">字典value</typeparam>
         /// <param name="jsonStr">json字符串</param>
         /// <returns>字典数据</returns>
-        public static Dictionary<TKey, TValue> DeserializeStringToDictionary<TKey, TValue>(this string jsonStr)
+        public static Dictionary<TKey, TValue> DeserializeStringToDictionary<TKey, TValue>( string jsonStr)
         {
             if (string.IsNullOrEmpty(jsonStr))
                 return new Dictionary<TKey, TValue>();
@@ -51,7 +95,7 @@ namespace KY.Converter
 
         }
 
-        public static object DeserializeJson(this string json)
+        public static object DeserializeJson( string json)
         {
             return ToObject(JToken.Parse(json));
         }
@@ -77,7 +121,7 @@ namespace KY.Converter
 
         #region 将对象转化为Dictionary
 
-        public static Dictionary<string, object> ConvertDictionary(this object obj)
+        public static Dictionary<string, object> ConvertDictionary( object obj)
         {
             if (obj is Dictionary<string, object>)
                 return (Dictionary<string, object>)obj;
@@ -111,7 +155,7 @@ namespace KY.Converter
             //    var dict = getter(obj);
             //    return dict;
             //}
-            Func<object, Dictionary<string, object>> getter = type.ConvertDictionary();
+            Func<object, Dictionary<string, object>> getter = ConvertDictionary(type);
             return getter(obj);
             //if (dictionaryCache.TryGetValue(type, out getter) == false)
             //{
@@ -127,7 +171,7 @@ namespace KY.Converter
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private static Func<object, Dictionary<string, object>> ConvertDictionary(this Type type)
+        private static Func<object, Dictionary<string, object>> ConvertDictionary( Type type)
         {
             var dm = new DynamicMethod((string.Format("Dictionary{0}", Guid.NewGuid())), typeof(Dictionary<string, object>), new[] { typeof(object) }, type, true);
             ILGenerator il = dm.GetILGenerator();
@@ -160,4 +204,5 @@ namespace KY.Converter
         }
         #endregion
     }
+
 }
