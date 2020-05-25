@@ -9,6 +9,7 @@ namespace KY.Converter
 {
     public abstract  class AbstractBsonConverter
     {
+        public static AbstractBsonConverter BsonConverter = new BsonConverter();
         public abstract string SerializeBson(BsonDocument bsons);
         public abstract BsonDocument DeserializeJson(string json);
         public abstract Dictionary<string, object> Convert(BsonDocument bsons);

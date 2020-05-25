@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using KY.Converter;
 using MongoDB.Bson;
 using System.Collections;
+using MongoDB.Driver;
+using MongoDB.Bson.Serialization;
 
 namespace KY.CMD
 {
@@ -15,11 +17,44 @@ namespace KY.CMD
        
         static  void Main(string[] args)
         {
-            Console.ReadKey();
-            testBson();
+            //Console.ReadKey();
+            //SaveMong();
+            //testBson();
+            Get();
             Console.ReadKey();
             //TestConvert();
 
+        }
+        static void Get() {
+
+            IMongoClient mongo = new MongoClient("mongodb://127.0.0.1:27018");
+            IMongoDatabase db = mongo.GetDatabase("mydata");
+            var collection = db.GetCollection<BsonDocument>("mytest");
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(GetData());
+            var BsonCollection = AbstractBsonConverter.BsonConverter.DeserializeJson(json);
+           
+            var builder = Builders<BsonDocument>.Filter.Eq("id", 123);
+            var data=  collection.Find(builder).First();
+ 
+        
+        }
+
+        static void SaveMong() {
+            IMongoClient mongo = new MongoClient("mongodb://127.0.0.1:27018");
+            IMongoDatabase db =  mongo.GetDatabase("mydata");
+            var collection = db.GetCollection<BsonDocument>("mytest");
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(GetData());
+            var BsonCollection = AbstractBsonConverter.BsonConverter.DeserializeJson(json);
+            collection.InsertOne(BsonCollection);
+        }
+
+        public static object GetData() {
+            return new
+            {
+                id = 123,
+                childrenid = new int[] { 123, 1234, 5443 },
+                children = new ArrayList { new { ids = "234", data = "4234234" }, new { ids = "134", data = "24324" } }
+            };
         }
 
         public static void testBson() {

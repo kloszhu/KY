@@ -1,0 +1,115 @@
+﻿1.什么是的反射发出(Reflection Emit)
+System..Reflection.Emit命名空间嵌套在System.Reflection的下面，它可动态的构建程序集和类型的所有框架类的根,在需要时动态的产生代码。
+注意：反射发出（reflection emit）并不能产生源代码。换句话说，你在这里的努力并不能创建VB.Net或者C#代码。相反，反射发出（reflection emit）类会创建MSIL op代码。
+
+一般的，使用反射发出（reflection emit）可能会是这样子的步骤：
+1.         创建一个新的程序集（程序集是动态的存在于内存中或把它们保存到磁盘上）。
+
+2.         在程序集内部，创建一个模块（module）。
+
+3.         在模块内部，创建一个类型。
+
+4.         给类型添加属性和方法。
+
+5.         产生属性和方法内部的代码
+
+确切得说，当你使用Reflection.Emit类产生代码时，以上描述的是你实际中要遵循的过程。
+
+反射发出(Reflection Emit)的应用详细步骤如下：
+步骤一：创建程序集
+a)         创建一个AssemblyName（用于唯一标识和命名程序集）。
+
+b)        获取当前应用程序域的一个引用（使用应用程序域提供的方法，返回AssemblyBuilder对象）。
+
+c)        通过调用AppDomain.DefineDynamicAssembly产生一个AssemblyBuilder对象实例。
+
+我们首先创建一个AssemblyName实例，用于标识我们的程序集
+AssemblyName name = new AssemblyName();
+name.Name = "MyFirstAssembly";
+然后，需要创建一个System.AppDomain类的一个实例，一般从当前运行的线程实例中得到。
+
+AppDomain ad = System.Threading.Thread.GetDomain();
+ 
+
+ 
+
+这两个实例创建以后，我们现在就可以定义一个AssemblyBuilder变量，然后使用之前创建的AssemblyName和AppDomain的实例把它实例化。AssemblyBuilder类是整个反射发出(Reflection Emit)的工作支架。它帮我们从零开始构造一个新的程序集提供了主要的机制。除此之外，还需要指定一个AssemblyBuilderAccess枚举值，它将表明，我们是想把程序集写入磁盘，保存到内存，还是两者都有。
+AssemblyBuilder abuilder = 
+ad.DefineDynamicAssembly(name,AssemblyBuilderAccess.Run);
+ 
+
+步骤二：定义一个模块(Module)
+这里，我们需要使用ModuleBuilder类，在之前创建的程序集(abuilder)里创建一个动态的模块。
+ModuleBuilder mbuilder = 
+abuilder.DefineDynamicModule("MyFirstModule");
+ 
+
+步骤三：创建一个类(Class)
+现在，我们需要使用TypeBuilder类添加到这个程集中了。
+TypeBuilder theClass = 
+mbuilder.DefineType("MyFirstClass",TypeAttributes.Public | TypeAttributes.Class);
+步骤四：添加一个方法(Method)
+在之前创建的类型对象上（theClass）调用DefineMethod获取一个MethodBuilder实例的引用。DefineMethod携带四个参数：方法的名称，方法可能的属性（如：public,private等等），方法的参数以及方法的返回值。在子程序里，参数和返回值可以是void值。
+
+复制代码
+Type ret = typeof(System.Int32); //返回值类型
+Type[] param = new Type[2];//定义方法的两个参数
+param[0] = typeof(System.Int32);
+param[1] = typeof(System.Int32);
+//下面创建方法
+MethodBuilder methodBuilder = 
+theClass.DefineMethod("ReturnSum",MethodAttributes.Public,ret,param);
+复制代码
+ 
+
+ 
+
+步骤五：产生方法里面的代码
+假如方法ReturnSum是如下这样的:
+public int ReturnSum(int val1,int val2)
+{
+    return val1 + val2;
+}
+ 
+
+如果想“发出”这一段代码，则首先需要知道如何仅使用MSIL op代码编写这个方法。值得高兴的是，这里有一个快速，简单的办法可以做到。我们简单的编译一下这段代码，然后使用.NET框架里的实用工具ildasm.exe查看程序集的结果。以下MSIL版本的代码是编译上面的方法产生的：
+复制代码
+.method public hidebysig instance int32  ReturnSum(int32 val1,int32 val2) cil managed
+{
+  // 代码大小       8 (0x8)
+  .maxstack  2
+  .locals init ([0] int32 CS$00000003$00000000)
+  IL_0000:  ldarg.1
+  IL_0001:  ldarg.2
+  IL_0002:  add
+  IL_0003:  stloc.0
+  IL_0004:  br.s       IL_0006
+  IL_0006:  ldloc.0
+  IL_0007:  ret
+} // end of method Class1::ReturnSum
+复制代码
+ 
+
+所以，我们使用MethodBuilder.GetILGenerator()方法获取对应方法上的ILGenerator类的实例。
+复制代码
+ILGenerator gen = methodBuilder.GetILGenerator();
+gen.Emit(OpCodes.Ldarg_1);
+gen.Emit(OpCodes.Ldarg_2);
+gen.Emit(OpCodes.Add);
+gen.Emit(OpCodes.Stloc_0);
+gen.Emit(OpCodes.Br_S);
+gen.Emit(OpCodes.Ldloc_0);
+gen.Emit(OpCodes.Ret);
+复制代码
+ 
+
+步骤六：产生类的引用
+到此，我们已经创建了方法，类，模块和程序集。为了得到这个类的一个引用，需要调用CreateType
+theClass.CreateType();
+ 
+
+步骤七：在反射中应用反射发出产生的代码
+Type ReturnSumClass = theClass.CreateType();//创建引用
+object ReturnSumInst = Activator.CreateInstance(ReturnSumClass);//创建实例化
+object o = ReturnSumClass.InvokeMember("ReturnSum",BindingFlags.InvokeMethod,null,ReturnSumInst,null);//调用方法
+Console.WriteLine("Sum:{0}",o.ToString());//显示结果
