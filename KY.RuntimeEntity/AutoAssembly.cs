@@ -16,10 +16,10 @@ namespace KY.RuntimeEntity
 
         public void DefineEntity() {
            
-            ModuleBuilder mb = ab.DefineDynamicModule("aName.Name");
-            TypeBuilder tb = mb.DefineType(
-           "MyDynamicType",
-            TypeAttributes.Public);
+           // ModuleBuilder mb = ab.DefineDynamicModule("aName.Name");
+           // TypeBuilder tb = mb.DefineType(
+           //"MyDynamicType",
+           // TypeAttributes.Public);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace KY.RuntimeEntity
             return this;
         }
 
-        public AutoAssembly Set
+
 
 
     }
