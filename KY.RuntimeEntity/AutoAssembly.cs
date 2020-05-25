@@ -22,26 +22,43 @@ namespace KY.RuntimeEntity
             TypeAttributes.Public);
         }
 
-
+        /// <summary>
+        /// ★1
+        /// </summary>
+        /// <param name="_AssemblyName"></param>
+        /// <returns></returns>
         public AutoAssembly DefineAssembly(string _AssemblyName) {
             assemblyName = new AssemblyName(_AssemblyName);
             assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndCollect);
             return this;
         }
 
-       
 
+        /// <summary>
+        /// ★2
+        /// </summary>
+        /// <param name="_AssemblyName"></param>
+        /// <returns></returns>
         public AutoAssembly DefineModule(string ModuleName) {
             moduleBuilder = assemblyBuilder.DefineDynamicModule(ModuleName);
             return this;
         }
-
+        /// <summary>
+        /// ★3
+        /// </summary>
+        /// <param name="_AssemblyName"></param>
+        /// <returns></returns>
         public AutoAssembly DefineType(string MyDynamicType) {
             typeBuilder = moduleBuilder.DefineType(
               MyDynamicType,
                TypeAttributes.Public);
             return this;
         }
+        /// <summary>
+        /// ★4
+        /// </summary>
+        /// <param name="_AssemblyName"></param>
+        /// <returns></returns>
         public AutoAssembly SetParent(Type type)
         {
             typeBuilder.SetParent(type);
