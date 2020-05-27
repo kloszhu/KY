@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KY.Converter\KY.Converter.csproj" />
+    <ProjectReference Include="..\KY.RuntimeEntity\KY.RuntimeEntity.csproj" />
   </ItemGroup>
 
 </Project>

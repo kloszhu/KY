@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace KY.RuntimeEntity
+namespace KY.NetForm
 {
     public class AutoAssembly
     {
@@ -37,13 +39,13 @@ namespace KY.RuntimeEntity
         public AutoAssembly DefineAssembly(string _AssemblyName)
         {
             assemblyName = new AssemblyName(_AssemblyName);
-            assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndCollect);
+            assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndSave);
             return this;
         }
 
 
         /// <summary>
-        /// ★2  IL Generator
+        /// ★2
         /// </summary>
         /// <param name="_AssemblyName"></param>
         /// <returns></returns>
@@ -83,11 +85,11 @@ namespace KY.RuntimeEntity
             prefixField + property_Name,
             type,
             FieldAttributes.Private);
-           
+
             #endregion
 
             #region 添加property属性字段
-            PropertyBuilder pbNumber = typeBuilder.DefineProperty( property_Name, PropertyAttributes.HasDefault, type,
+            PropertyBuilder pbNumber = typeBuilder.DefineProperty(property_Name, PropertyAttributes.HasDefault, type,
   null);
 
             // The property "set" and property "get" methods require a special
@@ -135,7 +137,8 @@ namespace KY.RuntimeEntity
             return this;
         }
 
-        public AutoAssembly SetProerties(IEnumerable<MyProerty> proerties) {
+        public AutoAssembly SetProerties(IEnumerable<MyProerty> proerties)
+        {
             foreach (var item in proerties)
             {
                 SetProperty(item.ProertyName, item.PropertyType);
@@ -157,13 +160,16 @@ namespace KY.RuntimeEntity
             return this;
         }
 
-        public AutoAssembly Save() {
-            resultType = typeBuilder.CreateTypeInfo();
+        public AutoAssembly Save(string DllName)
+        {
+            resultType = typeBuilder.CreateType();
+            assemblyBuilder.Save(DllName + ".dll");
 
             return this;
         }
 
-        public AutoAssembly CreatedEntity(Action action) {
+        public AutoAssembly CreatedEntity(Action action)
+        {
             action.Invoke();
             return this;
         }
@@ -177,5 +183,4 @@ namespace KY.RuntimeEntity
         public string ProertyName { get; set; }
         public Type PropertyType { get; set; }
     }
-
 }

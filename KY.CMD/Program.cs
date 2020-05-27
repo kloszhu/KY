@@ -9,6 +9,8 @@ using MongoDB.Bson;
 using System.Collections;
 using MongoDB.Driver;
 using MongoDB.Bson.Serialization;
+using KY.RuntimeEntity;
+using System.Reflection;
 
 namespace KY.CMD
 {
@@ -20,7 +22,7 @@ namespace KY.CMD
             //Console.ReadKey();
             //SaveMong();
             //testBson();
-            Get();
+            SaveDynamic();
             Console.ReadKey();
             //TestConvert();
 
@@ -33,10 +35,39 @@ namespace KY.CMD
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(GetData());
             var BsonCollection = AbstractBsonConverter.BsonConverter.DeserializeJson(json);
            
+       
+
             var builder = Builders<BsonDocument>.Filter.Eq("id", 123);
             var data=  collection.Find(builder).First();
  
         
+        }
+        static void SaveDynamic() {
+           
+          
+
+            AutoAssembly assembly = new AutoAssembly();
+            var list = new List<MyProerty>();
+            list.Add(new MyProerty { ProertyName = "ID", PropertyType = typeof(int) });
+            list.Add(new MyProerty { ProertyName = "IDS", PropertyType = typeof(int) });
+            list.Add(new MyProerty { ProertyName = "IDSS", PropertyType = typeof(int) });
+            list.Add(new MyProerty { ProertyName = "IDSSS", PropertyType = typeof(int) });
+            list.Add(new MyProerty { ProertyName = "IDSSSS", PropertyType = typeof(int) });
+            list.Add(new MyProerty { ProertyName = "IDSSSSS", PropertyType = typeof(int) });
+            assembly.DefineAssembly("myCustomerAssembly").DefineModule("CustomerAssembly").DefineType("Students").SetProerties(list).Save();
+            var data = assembly.resultType;
+            object o1 = Activator.CreateInstance(data);
+            int i = 0;
+            foreach (var item in o1.GetType().GetProperties())
+            {
+                i++;
+                item.SetValue(o1,i);
+            }
+            MongoHelp mongoHelp = new MongoHelp();
+            var method = mongoHelp.GetType().GetMethod("SaveMong").MakeGenericMethod(data);
+           var collections=  method.Invoke(mongoHelp, new[] {o1 });
+            Console.WriteLine(JsonConvert.SerializeObject(o1));
+          
         }
 
         static void SaveMong() {
@@ -81,7 +112,7 @@ namespace KY.CMD
             {
                 Directory.CreateDirectory("Json");
             }
-            var ss = new Student { ID = 1, Name = "周杰伦" };
+           // var ss = new Student { ID = 1, Name = "周杰伦" };
 
             var dd = new { SSID = 1, SName = "周杰伦", SPPID = new[] { 1, 2, 3 }, children = new[] { new { ids = 4, names = "123" }, new { ids = 2, names = "321" }, new { ids = 6, names = "222" } } };
             var json = JsonConvert.SerializeObject(dd);
