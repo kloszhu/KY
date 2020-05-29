@@ -16,13 +16,22 @@ namespace KY.CMD
 {
     class Program
     {
-       
+        public class test {
+           public  MyType type { get; set; } 
+        }
         static  void Main(string[] args)
         {
+            string types = "System.Int32";
+            Type type = Type.GetType("int");
+            var data = new { type1 = "Int32" };
+            string json = "{\"type\":\"Nullable\"}";
+           
+          var json1=JsonConvert.DeserializeObject<test>(json);
+            Console.WriteLine(json);
             //Console.ReadKey();
             //SaveMong();
             //testBson();
-            SaveDynamic();
+            //SaveDynamic();
             Console.ReadKey();
             //TestConvert();
 

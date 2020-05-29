@@ -1,0 +1,46 @@
+﻿@page "/definemodel"
+@using MatBlazor;
+<h1>Hello, world!</h1>
+
+
+
+<MatSelect Label="选择类型" @bind-Value="PropertyType">
+    <MatOptionString></MatOptionString>
+    <MatOptionString Value="System.Int32">int</MatOptionString>
+    <MatOptionString Value="System.String">text</MatOptionString>
+    <MatOptionString Value="System.Int64">bigint</MatOptionString>
+    <MatOptionString Value="System.Byte[]">binary</MatOptionString>
+    <MatOptionString Value="System.Boolean">bit</MatOptionString>
+    <MatOptionString Value="System.String">char</MatOptionString>
+    <MatOptionString Value="System.DateTime">datetime</MatOptionString>
+    <MatOptionString Value="System.Decimal">decimal</MatOptionString>
+    <MatOptionString Value="System.Double">float</MatOptionString>
+    <MatOptionString Value="System.Byte[]">image</MatOptionString>
+    <MatOptionString Value="System.Decimal">money</MatOptionString>
+    <MatOptionString Value="System.String">nchar</MatOptionString>
+    <MatOptionString Value="System.String">ntext</MatOptionString>
+    <MatOptionString Value="System.Decimal">numeric</MatOptionString>
+    <MatOptionString Value="System.String">nvarchar</MatOptionString>
+    <MatOptionString Value="System.Single">real</MatOptionString>
+    <MatOptionString Value="System.DateTime">smalldatetime</MatOptionString>
+    <MatOptionString Value="System.Int16">smallint</MatOptionString>
+    <MatOptionString Value="System.Decimal">smallmoney</MatOptionString>
+    <MatOptionString Value="System.DateTime">timestamp</MatOptionString>
+    <MatOptionString Value="System.Byte">tinyint</MatOptionString>
+    <MatOptionString Value="System.Byte[]">varbinary</MatOptionString>
+    <MatOptionString Value="System.String">varchar</MatOptionString>
+    <MatOptionString Value="System.Object">Variant</MatOptionString>
+    <MatOptionString Value="System.Guid">unique identifier</MatOptionString>
+</MatSelect>
+
+<MatTextField Label="字段名称" @bind-Value="PropertyName"></MatTextField>
+
+<span>@PropertyName</span>
+<span>@PropertyType</span>
+@code
+        {
+    string PropertyType;
+    string PropertyName;
+}
+
+<SurveyPrompt Title="如何使用?" />
